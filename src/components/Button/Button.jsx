@@ -1,5 +1,12 @@
-import { ButtonLoadore } from './Button.styled';
+import React from 'react';
+import { ButtonLoadMore } from './Button.styled';
 
-export const Button = () => {
-  return <ButtonLoadore type="button">Load More...</ButtonLoadore>;
+export const Button = ({ onChange }) => {
+  return (
+    <>
+      <ButtonLoadMore type="button" onClick={onChange}>
+        Load More...
+      </ButtonLoadMore>
+    </>
+  );
 };
