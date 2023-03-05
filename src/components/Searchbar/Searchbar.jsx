@@ -21,7 +21,6 @@ export class Searchbar extends Component {
   hadleSubit = event => {
     event.preventDefault();
     if (this.state.imageName.trim() === '') {
-      console.log('Searchbar');
       return toast.warn('Enter a name for the image');
     }
 
