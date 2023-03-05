@@ -11,21 +11,16 @@ export class ImageGallery extends Component {
     loading: false,
   };
 
-  handlePageChange = () => {
-    this.setState(prevState => {
-      return {
-        page: prevState.page + 1,
-      };
-    });
-  };
-
   componentDidUpdate(prevProps, prevState) {
+    if (prevProps.imageName !== this.props.imageName) {
+      this.resetState(prevProps.imageName !== this.props.imageName);
+    }
+
     if (
       prevProps.imageName !== this.props.imageName ||
       prevState.page !== this.state.page
     ) {
-      console.log(`name:${this.state.images.hits}`);
-      this.setState({ loading: true, image: [] });
+      this.setState({ loading: true });
 
       fetch(
         `https://pixabay.com/api/?key=32765009-e8a3776ebed1bf95519eebcf0&q=${this.props.imageName}&page=${this.state.page}&per_page=12`
@@ -36,9 +31,11 @@ export class ImageGallery extends Component {
           }
           return Promise.reject(new Error('Not Found'));
         })
-        .then(images =>
-          this.setState({ images: [...this.state.images, ...images.hits] })
-        )
+        .then(images => {
+          return this.setState({
+            images: [...this.state.images, ...images.hits],
+          });
+        })
         .catch(error => {
           console.log(error);
         })
@@ -46,14 +43,29 @@ export class ImageGallery extends Component {
     }
   }
 
+  handlePageChange = () => {
+    this.setState(prevState => {
+      return {
+        page: prevState.page + 1,
+      };
+    });
+  };
+
+  resetState(name) {
+    if (name) {
+      this.setState({ images: [], page: 1 });
+    }
+  }
+
   render() {
     return (
       <>
-        <ImageGalleryList>
-          {this.state.images.length !== 0 && (
+        {this.state.images.length !== 0 && (
+          <ImageGalleryList>
             <ImageGalleryItem images={this.state.images} />
-          )}
-        </ImageGalleryList>
+          </ImageGalleryList>
+        )}
+
         {this.state.loading && (
           <ProgressBar
             height="80"
@@ -68,6 +80,7 @@ export class ImageGallery extends Component {
             barColor="#3f51b5"
           />
         )}
+
         {this.state.images.length !== 0 && (
           <Button onChange={this.handlePageChange} />
         )}
