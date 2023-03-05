@@ -1,9 +1,12 @@
 import { ImageItem, ImageGalleryItemImage } from './ImageGalleryItem.styled';
 
-export const ImageGalleryItem = () => {
+export const ImageGalleryItem = ({ images }) => {
   return (
-    <ImageItem>
-      <ImageGalleryItemImage src="" alt="" />
-    </ImageItem>
+    <>
+      {console.log(images)}
+      <ImageItem>
+        <ImageGalleryItemImage src="" alt="" />
+      </ImageItem>
+    </>
   );
 };
