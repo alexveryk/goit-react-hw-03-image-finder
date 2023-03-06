@@ -5,10 +5,26 @@ import { ImageItem, ImageGalleryLiImage } from './ImageGalleryItem.styled';
 export class ImageGalleryItem extends Component {
   state = {
     showModal: false,
+    originalImage: '',
   };
 
   toogleModal = () => {
     this.setState(({ showModal }) => ({ showModal: !showModal }));
+  };
+
+  openModal = evt => {
+    this.toogleModal();
+    const galleryImg = evt.target.nodeName;
+    const originalImage = evt.target.dataset.source;
+
+    if (galleryImg !== 'IMG') {
+      return;
+    }
+    this.setState({
+      originalImage,
+    });
+    console.log(originalImage);
+    return originalImage;
   };
 
   render() {
@@ -21,15 +37,16 @@ export class ImageGalleryItem extends Component {
                 <ImageGalleryLiImage
                   src={image.webformatURL}
                   alt={image.tags}
-                  onClick={this.toogleModal}
+                  onClick={this.openModal}
+                  data-source={image.largeImageURL}
                 />
               </ImageItem>
-              {this.state.showModal && (
-                <Modal onClose={this.toogleModal}>{image.webformatURL}</Modal>
-              )}
             </>
           );
         })}
+        {this.state.showModal && (
+          <Modal onClose={this.toogleModal} url={this.state.originalImage} />
+        )}
       </>
     );
   }
