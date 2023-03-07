@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { createPortal } from 'react-dom';
+import PropTypes from 'prop-types';
 import { Overlay, ModalWindow } from './Modal.styled';
 
 const modalRoot = document.querySelector('#modal-root');
 
 export class Modal extends Component {
-  state = {};
   componentDidMount() {
     window.addEventListener('keydown', this.handleKeyDown);
   }
@@ -16,27 +16,30 @@ export class Modal extends Component {
 
   handleKeyDown = event => {
     if (event.code === 'Escape') {
-      console.log('Close Modal');
       this.props.onClose();
     }
   };
 
   handleBackdropClick = event => {
     if (event.currentTarget === event.target) {
-      console.log('Close Modal');
       this.props.onClose();
     }
   };
 
   render() {
+    const { url } = this.props;
+
     return createPortal(
       <Overlay onClick={this.handleBackdropClick}>
         <ModalWindow>
-          {' '}
-          <img src={this.props.url} alt="" />
+          <img src={url} alt=" " />
         </ModalWindow>
       </Overlay>,
       modalRoot
     );
   }
 }
+
+Modal.propTypes = {
+  url: PropTypes.string.isRequired,
+};
