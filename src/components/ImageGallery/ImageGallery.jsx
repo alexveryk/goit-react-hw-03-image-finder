@@ -1,6 +1,7 @@
 import { ImageGalleryItem } from 'components/ImageGalleryItem/ImageGalleryItem';
 import React, { Component } from 'react';
 import { ProgressBar } from 'react-loader-spinner';
+import PropTypes from 'prop-types';
 import { ImageGalleryList } from './ImageGallery.styled';
 import { Button } from 'components/Button/Button';
 
@@ -9,24 +10,26 @@ export class ImageGallery extends Component {
     images: [],
     page: 1,
     loading: false,
+    totalHits: 0,
   };
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevProps.imageName !== this.props.imageName) {
-      this.resetState(prevProps.imageName !== this.props.imageName);
+    const { imageName } = this.props;
+    const { page } = this.state;
+
+    if (prevProps.imageName !== imageName) {
+      this.resetState(prevProps.imageName !== imageName);
     }
 
-    if (
-      prevProps.imageName !== this.props.imageName ||
-      prevState.page !== this.state.page
-    ) {
+    if (prevProps.imageName !== imageName || prevState.page !== page) {
       this.setState({ loading: true });
 
       fetch(
-        `https://pixabay.com/api/?key=32765009-e8a3776ebed1bf95519eebcf0&q=${this.props.imageName}&page=${this.state.page}&per_page=12`
+        `https://pixabay.com/api/?key=32765009-e8a3776ebed1bf95519eebcf0&q=${imageName}&page=${page}&per_page=12`
       )
         .then(response => {
           if (response.ok) {
+            console.log('pislia', response);
             return response.json();
           }
           return Promise.reject(new Error('Not Found'));
@@ -34,6 +37,7 @@ export class ImageGallery extends Component {
         .then(images => {
           return this.setState({
             images: [...this.state.images, ...images.hits],
+            totalHits: images.totalHits,
           });
         })
         .catch(error => {
@@ -53,20 +57,24 @@ export class ImageGallery extends Component {
 
   resetState(name) {
     if (name) {
-      this.setState({ images: [], page: 1 });
+      this.setState({
+        images: [],
+        page: 1,
+      });
     }
   }
 
   render() {
+    const { images, totalHits, loading } = this.state;
     return (
       <>
-        {this.state.images.length !== 0 && (
+        {images.length !== 0 && (
           <ImageGalleryList>
-            <ImageGalleryItem images={this.state.images} />
+            <ImageGalleryItem images={images} />
           </ImageGalleryList>
         )}
 
-        {this.state.loading && (
+        {loading && (
           <ProgressBar
             height="80"
             width="80"
@@ -81,10 +89,14 @@ export class ImageGallery extends Component {
           />
         )}
 
-        {this.state.images.length !== 0 && (
+        {images.length < totalHits && (
           <Button onChange={this.handlePageChange} />
         )}
       </>
     );
   }
 }
+
+ImageGallery.propTypes = {
+  imageName: PropTypes.string.isRequired,
+};
