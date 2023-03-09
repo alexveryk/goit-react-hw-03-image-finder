@@ -6,8 +6,9 @@ import {
   SearchFormInput,
 } from './Searchbar.styled';
 import { MdImageSearch } from 'react-icons/md';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { toast } from 'react-toastify';
+import PropTypes from 'prop-types';
 
 export class Searchbar extends Component {
   state = {
@@ -19,12 +20,15 @@ export class Searchbar extends Component {
   };
 
   hadleSubit = event => {
+    const { onSubmit } = this.props;
+    const { imageName } = this.state;
+
     event.preventDefault();
-    if (this.state.imageName.trim() === '') {
+    if (imageName.trim() === '') {
       return toast.warn('Enter a name for the image');
     }
 
-    this.props.onSubmit(this.state.imageName);
+    onSubmit(imageName);
     this.setState({ imageName: '' });
   };
 
@@ -52,3 +56,7 @@ export class Searchbar extends Component {
     );
   }
 }
+
+Searchbar.propTypes = {
+  onSubmit: PropTypes.func.isRequired,
+};
