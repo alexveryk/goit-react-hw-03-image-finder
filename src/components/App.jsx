@@ -28,7 +28,7 @@ export class App extends Component {
 
         const fetchData = await getImages(imageName, page);
         if (!fetchData.total) {
-          toast.error('Error Notification !', {
+          toast.error('No images found !', {
             position: toast.POSITION.TOP_LEFT,
           });
         }
